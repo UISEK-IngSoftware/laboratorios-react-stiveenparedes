@@ -14,7 +14,6 @@ axios.interceptors.request.use((config) => {
  *  Obtener lista de Pokemones
  * @returns 
  */
-
 export async function fetchPokemons() {
     const response = await axios.get(`${API_BASE_URL}/pokemons/`);
 
@@ -38,7 +37,6 @@ function fileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => {
-            // reader.result ya incluye el encabezado, lo usamos completo
             resolve(reader.result);
         };
         reader.onerror = reject;
@@ -51,7 +49,6 @@ function fileToBase64(file) {
  * @param {*} pokemonData 
  * @returns 
  */
-
 export async function addPokemon(pokemonData) {
     let pictureBase64 = '';
     if (pokemonData.picture) {
@@ -63,4 +60,43 @@ export async function addPokemon(pokemonData) {
     };
     const response = await axios.post(`${API_BASE_URL}/pokemons/`, payload);
     return response.data;
+}
+
+/**
+ * Obtener un Pokémon por ID
+ * @param {*} id
+ * @returns
+ */
+export async function getPokemonById(id) {
+    const response = await axios.get(`${API_BASE_URL}/pokemons/${id}/`);
+    return response.data;
+}
+
+/**
+ * Actualizar un Pokémon
+ * @param {*} id
+ * @param {*} pokemonData
+ * @returns
+ */
+export async function updatePokemon(id, pokemonData) {
+    let pictureBase64 = '';
+    if (pokemonData.picture) {
+        pictureBase64 = await fileToBase64(pokemonData.picture);
+    }
+
+    const payload = {
+        ...pokemonData,
+        picture: pictureBase64
+    };
+
+    const response = await axios.put(`${API_BASE_URL}/pokemons/${id}/`, payload);
+    return response.data;
+}
+
+/**
+ * Eliminar un Pokémon
+ * @param {*} id
+ */
+export async function deletePokemon(id) {
+    await axios.delete(`${API_BASE_URL}/pokemons/${id}/`);
 }

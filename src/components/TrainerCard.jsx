@@ -3,25 +3,26 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
-import { deletePokemon } from "../services/pokemonService";
+import { deleteTrainer } from "../services/trainerService";
 
-export default function PokemonCard({ pokemon }) {
+export default function TrainerCard({ trainer }) {
     const navigate = useNavigate();
     const mediaUrl = import.meta.env.VITE_MEDIA_URL;
     const isLoggedIn = !!localStorage.getItem("access_token");
 
-    pokemon.image = `${mediaUrl}/${pokemon.picture}`;
+    trainer.image = `${mediaUrl}/${trainer.picture}`;
 
     const handleDelete = async () => {
-        const confirmDelete = window.confirm("¿Seguro que deseas eliminar este Pokémon?");
+        const confirmDelete = window.confirm("¿Seguro que deseas eliminar este Entrenador?");
         if (!confirmDelete) return;
+
         try {
-            await deletePokemon(pokemon.id);
-            alert("Pokémon eliminado correctamente");
+            await deleteTrainer(trainer.id);
+            alert("Entrenador eliminado correctamente");
             window.location.reload();
         } catch (error) {
             console.error(error);
-            alert("Error al eliminar el Pokémon");
+            alert("Error al eliminar el Entrenador");
         }
     };
 
@@ -30,29 +31,30 @@ export default function PokemonCard({ pokemon }) {
             <CardMedia
                 component="img"
                 height={200}
-                image={pokemon.image}
-                alt={pokemon.name}
+                image={trainer.image}
+                alt={`${trainer.first_name} ${trainer.last_name}`}
                 sx={{
                     objectFit: "contain",
                     backgroundColor: "#f5f5f5"
                 }}
             />
             <CardContent>
-                <Typography variant="h5" component="div">
-                    {pokemon.name}
+                <Typography variant="h5">
+                    {trainer.first_name} {trainer.last_name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    Tipo: {pokemon.type}
+                    Nivel: {trainer.level}
                 </Typography>
             </CardContent>
             <CardActions>
                 <Button
                     size="small"
                     startIcon={<VisibilityIcon />}
-                    onClick={() => navigate(`/pokemon/${pokemon.id}`)}
+                    onClick={() => navigate(`/trainer/${trainer.id}`)}
                 >
                     Ver más
                 </Button>
+
                 {isLoggedIn && (
                     <>
                         <Button
@@ -64,10 +66,11 @@ export default function PokemonCard({ pokemon }) {
                                     backgroundColor: "rgba(245, 124, 0, 0.1)"
                                 }
                             }}
-                            onClick={() => navigate(`/edit-pokemon/${pokemon.id}`)}
+                            onClick={() => navigate(`/edit-trainer/${trainer.id}`)}
                         >
                             Editar
                         </Button>
+
                         <Button
                             size="small"
                             color="error"

@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
-import PokemonCard from "../components/PokemonCard";
-import { fetchPokemons } from "../services/pokemonService";
+import TrainerCard from "../components/TrainerCard";
+import { fetchTrainers } from "../services/trainerService";
 
-export default function PokemonList() {
+export default function TrainerList() {
 
-    const [pokemons, setPokemons] = useState([]);
+    const [trainers, setTrainers] = useState([]);
 
     useEffect(() => {
-        fetchPokemons()
-            .then(setPokemons)
+        fetchTrainers()
+            .then(setTrainers)
             .catch((error) => {
-                alert("Error obteniendo los pokemones");
+                alert("Error obteniendo los entrenadores");
                 console.error(error);
             });
     }, []);
@@ -19,9 +19,9 @@ export default function PokemonList() {
 
     return (
         <Grid container spacing={2} sx={{ marginTop: 2 }} justifyContent="center">
-            {pokemons.map((pokemon, index) => (
+            {trainers.map((trainer, index) => (
                 <Grid key={index} xs={12} sm={6} md={4}>
-                    <PokemonCard pokemon={pokemon} />
+                    <TrainerCard trainer={trainer} />
                 </Grid>
             ))}
         </Grid>
