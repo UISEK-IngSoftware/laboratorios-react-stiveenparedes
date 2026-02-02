@@ -2,20 +2,24 @@ import { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import TrainerCard from "../components/TrainerCard";
 import { fetchTrainers } from "../services/trainerService";
+import Spinner from "../components/Spinner";
 
 export default function TrainerList() {
-
     const [trainers, setTrainers] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        setLoading(true);
         fetchTrainers()
             .then(setTrainers)
             .catch((error) => {
                 alert("Error obteniendo los entrenadores");
                 console.error(error);
-            });
+            })
+            .finally(() => setLoading(false));
     }, []);
 
+    if (loading) return <Spinner />;
 
     return (
         <Grid container spacing={2} sx={{ marginTop: 2 }} justifyContent="center">

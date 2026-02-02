@@ -2,19 +2,24 @@ import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getPokemonById } from "../services/pokemonService";
+import Spinner from "../components/Spinner";
 
 export default function PokemonDetail() {
     const { id } = useParams();
     const [pokemon, setPokemon] = useState(null);
+    const [loading, setLoading] = useState(false);
     const mediaUrl = import.meta.env.VITE_MEDIA_URL;
 
     useEffect(() => {
+        setLoading(true);
         getPokemonById(id)
             .then(setPokemon)
-            .catch(() => alert("Error al obtener el Pokémon"));
+            .catch(() => alert("Error al obtener el Pokémon"))
+            .finally(() => setLoading(false));
     }, [id]);
 
-    if (!pokemon) return <Typography>Cargando...</Typography>;
+    if (loading) return <Spinner />;
+    if (!pokemon) return null;
 
     return (
         <Card>

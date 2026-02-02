@@ -2,6 +2,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { addTrainer, getTrainerById, updateTrainer } from "../services/trainerService";
+import Spinner from "../components/Spinner";
 
 export default function TrainerForm() {
     const navigate = useNavigate();
@@ -15,23 +16,28 @@ export default function TrainerForm() {
         picture: null
     });
 
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         if (id) {
-            getTrainerById(id).then((data) => {
-                setTrainerData({
-                    first_name: data.first_name,
-                    last_name: data.last_name,
-                    birthdate: data.birthdate,
-                    level: data.level,
-                    picture: null
-                });
-            });
+            setLoading(true);
+            getTrainerById(id)
+                .then((data) => {
+                    setTrainerData({
+                        first_name: data.first_name,
+                        last_name: data.last_name,
+                        birthdate: data.birthdate,
+                        level: data.level,
+                        picture: null
+                    });
+                })
+                .catch(() => alert("Error al obtener el Entrenador"))
+                .finally(() => setLoading(false));
         }
     }, [id]);
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
-
         setTrainerData({
             ...trainerData,
             [name]: name === 'picture' ? files[0] : value
@@ -40,7 +46,6 @@ export default function TrainerForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             if (id) {
                 await updateTrainer(id, trainerData);
@@ -49,13 +54,14 @@ export default function TrainerForm() {
                 await addTrainer(trainerData);
                 alert("Entrenador agregado exitosamente");
             }
-
             navigate('/trainers');
         } catch (error) {
             console.error("Error", error);
             alert("Ocurrió un error");
         }
     };
+
+    if (loading) return <Spinner />;
 
     return (
         <>
